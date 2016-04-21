@@ -1,8 +1,42 @@
 #!/usr/local/bin/babel-node
 
-import server from '../server';
+import app from '../server';
+import https from 'https';
+import fs from 'fs';
+import path from 'path';
+import sslRootCAs from 'ssl-root-cas';
 
-const PORT = 3000;  //TODO: argv?
+sslRootCAs.inject()
+  .addFile(path.join(__dirname, '../certs', 'ca.pem'));
+const options = {
+  key: fs.readFileSync(path.join(__dirname, '../certs', 'key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, '../certs', 'cert.pem'))
+};
+const PORT = 3001;
 
-server.listen(PORT);
+https.createServer(options, app.callback()).listen(PORT);
 console.log(`listening on port ${PORT}`);
+
+/* Drakov experimentation
+
+var drakovMiddleware = require('drakov').middleware;
+var argv = {
+    sourceFiles: 'api/blueprint/**.apib',
+    serverPort: 3000,
+    stealthmode: true,
+    disableCORS: true,
+    sslKeyFile: '../certs/key.pem',
+    sslCrtFile: '../certs/cert.pem',
+    delay: 2000,
+};
+
+// const appcb = app.callback();
+// drakovMiddleware.init(app, argv, (err, middlewareFunction) => {
+//   if (err) {
+//       throw err;
+//   }
+//   app.use(middlewareFunction);
+//   app.listen(argv.serverPort);
+// });
+
+*/

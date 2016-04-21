@@ -6,8 +6,10 @@ import views from 'koa-views';
 import mount from 'koa-mount';
 import serve from 'koa-static';
 import convert from 'koa-convert';
+import cors from 'koa-cors';
 import finalHandler from './lib/finalHandler';
 import router from './router';
+import 'babel-core/register';
 
 const app = new Koa();
 
@@ -20,8 +22,9 @@ app.use(views(`${__dirname}/views`, {
 app.use(logger());
 app.use(mount('/static', serve('public')));
 app.use(bodyParser());
-app.keys = ['some secret hurr'];
+// app.keys = ['some secret hurr'];
 app.use(convert(session(app)));
+app.use(convert(cors()));
 app
   .use(router.routes())
   .use(router.allowedMethods());
