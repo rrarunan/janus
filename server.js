@@ -8,7 +8,7 @@ import serve from 'koa-static';
 import convert from 'koa-convert';
 import cors from 'koa-cors';
 import finalHandler from './lib/finalHandler';
-import router from './router';
+import router as DefaultRouter from './router';
 import 'babel-core/register';
 
 const app = new Koa();
@@ -22,11 +22,13 @@ app.use(views(`${__dirname}/views`, {
 app.use(logger());
 app.use(mount('/static', serve('public')));
 app.use(bodyParser());
-// app.keys = ['some secret hurr'];
+
 app.use(convert(session(app)));
 app.use(convert(cors()));
+
+// This is the default router
 app
-  .use(router.routes())
-  .use(router.allowedMethods());
+  .use(DefaultRouter.routes())
+  .use(DefaultRouter.allowedMethods());
 
 export default app;

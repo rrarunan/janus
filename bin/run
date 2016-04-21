@@ -6,6 +6,8 @@ import fs from 'fs';
 import path from 'path';
 import sslRootCAs from 'ssl-root-cas';
 
+// The current state of this is, support for a HTTPS server
+// that has a CA and Certificates that are Self-Signed
 sslRootCAs.inject()
   .addFile(path.join(__dirname, '../certs', 'ca.pem'));
 const options = {
@@ -17,7 +19,7 @@ const PORT = 3001;
 https.createServer(options, app.callback()).listen(PORT);
 console.log(`listening on port ${PORT}`);
 
-/* Drakov experimentation
+/* Drakov experimentation for API Blueprint Mocking
 
 var drakovMiddleware = require('drakov').middleware;
 var argv = {
